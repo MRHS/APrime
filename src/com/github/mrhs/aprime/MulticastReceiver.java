@@ -19,7 +19,7 @@ public class MulticastReceiver extends Thread
 	{
 		try
 		{
-			this.socket = new MulticastSocket();
+			this.socket = new MulticastSocket(8820);
 			this.socket.joinGroup(address);
 			
 			while (true)
