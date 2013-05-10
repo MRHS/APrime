@@ -33,8 +33,10 @@ public class TaskSender extends Thread
 		{
 			byte[] sourceFile = Files.readAllBytes(Paths.get(this.task.getTaskLocation()));
 			
-			while (true)
+			while (!this.socket.isClosed())
 			{
+				System.out.println("Waiting for socket: " + sourceFile.length);
+				
 				Socket receiveSocket = this.socket.accept();
 				
 				DataOutputStream outputStream = new DataOutputStream(receiveSocket.getOutputStream());
@@ -45,6 +47,13 @@ public class TaskSender extends Thread
 				{
 					outputStream.write(Arrays.copyOfRange(sourceFile, i, i + 512));
 				}
+				
+				outputStream.write(Arrays.copyOfRange(sourceFile, i, sourceFile.length));
+				
+				receiveSocket.close();
+				this.socket.close();
+				
+				System.out.println("Finished sending");
 			}
 		}
 		catch (IOException e)
