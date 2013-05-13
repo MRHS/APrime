@@ -50,13 +50,15 @@ public class TaskSender extends Thread
 				
 				outputStream.write(Arrays.copyOfRange(sourceFile, i, sourceFile.length));
 				
+				Thread.sleep(5000);
+				
 				receiveSocket.close();
 				this.socket.close();
 				
 				System.out.println("Finished sending");
 			}
 		}
-		catch (IOException e)
+		catch (IOException | InterruptedException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
