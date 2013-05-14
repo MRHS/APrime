@@ -10,11 +10,13 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
-import sun.misc.IOUtils;
+import com.github.mrhs.aprime.tasks.Task;
 
 public class TaskReceiver extends Thread
 {
@@ -24,6 +26,8 @@ public class TaskReceiver extends Thread
 	
 	private String packageName;
 	private String className;
+	
+	private List<TaskListener> listeners = new ArrayList<TaskListener>();
 	
 	public TaskReceiver(InetAddress address, int port, String packageName, String className)
 	{
@@ -82,14 +86,27 @@ public class TaskReceiver extends Thread
 			
 			Class<?> cls = Class.forName(this.packageName + "." + this.className, true, classLoader);
 			
-			Object task = cls.newInstance();
+			Task task = (Task) cls.newInstance();
 			
-			System.out.println(task);
+			this.fireReceiveFinished(task);
 		}
 		catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	public void addListener(TaskListener listener)
+	{
+		this.listeners.add(listener);
+	}
+	
+	private void fireReceiveFinished(Task task)
+	{
+		for (TaskListener listener : this.listeners)
+		{
+			listener.taskReceiveFinished(task);
 		}
 	}
 }
