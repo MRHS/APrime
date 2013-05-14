@@ -41,6 +41,8 @@ public class TaskReceiver extends Thread
 	{
 		try
 		{
+			// TRY TO CONNECT TO THE NODE ON THE GIVEN PORT
+			
 			this.socket = new Socket(this.address, this.port);
 			
 			InputStream reader = this.socket.getInputStream();

@@ -23,16 +23,24 @@ public class MulticastSender extends Thread
 	{
 		try
 		{
+			// CREATE THE MULTICAST SOCKET
+			
 			this.socket = new MulticastSocket();
 			
 			while (true)
 			{
+				// CHECK IF THERE ARE ANY MESSAGES TO SEND
+				
 				if (this.queue.isEmpty())
 				{
+					// IF THERE ARE NO MESSAGES, LIMIT THE CHECK TO 1 SECOND
+					
 					Thread.sleep(1000);
 					
 					continue;
 				}
+				
+				// POP THE FIRST MESSAGE AND SEND IT
 				
 				DatagramPacket packet = this.queue.poll();
 				
@@ -41,14 +49,19 @@ public class MulticastSender extends Thread
 		}
 		catch (IOException | InterruptedException e)
 		{
-			// TODO Auto-generated catch block
+			// TODO HANDLE SOCKET AND SENDING ERRORS
+			
 			e.printStackTrace();
 		}
 	}
 	
 	public void sendData(String data)
 	{
+		// CREATE A PACKET CONTAINING THE STRING DATA THAT IS AIMED FOR THE MULTICAST SOCKET
+		
 		DatagramPacket packet = new DatagramPacket(data.getBytes(), data.getBytes().length, this.address, 8820);
+		
+		// QUEUE THE MESSAGE
 		
 		this.queue.add(packet);
 	}
