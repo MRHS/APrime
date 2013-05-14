@@ -21,7 +21,7 @@ public class TestTask implements Task {
 	@Override
 	public String getTaskLocation() {
 		// TODO Auto-generated method stub
-		return "E:\\cygwin\\home\\compsci\\github\\APrime\\src\\com\\github\\mrhs\\aprime\\TestTask.java";
+		return "E:\\Cygwin\\home\\compsci\\repositories\\APrime\\src\\com\\github\\mrhs\\aprime\\TestTask.java";
 	}
 
 }

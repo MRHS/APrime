@@ -15,7 +15,7 @@ public class Runner
 		TaskSender taskSender = new TaskSender(new TestTask());
 		taskSender.start();
 		
-		TaskReceiver taskReceiver = new TaskReceiver(InetAddress.getLocalHost(), 1337, "TestTask");
+		TaskReceiver taskReceiver = new TaskReceiver(InetAddress.getLocalHost(), 1337, "com.github.mrhs.aprime", "TestTask");
 		taskReceiver.start();
 	}
 }

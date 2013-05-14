@@ -21,12 +21,15 @@ public class TaskReceiver extends Thread
 	private InetAddress address;
 	private int port;
 	private Socket socket;
+	
+	private String packageName;
 	private String className;
 	
-	public TaskReceiver(InetAddress address, int port, String className)
+	public TaskReceiver(InetAddress address, int port, String packageName, String className)
 	{
 		this.address = address;
 		this.port = port;
+		this.packageName = packageName;
 		this.className = className;
 	}
 	
@@ -77,7 +80,7 @@ public class TaskReceiver extends Thread
 			
 			URLClassLoader classLoader = new URLClassLoader(new URL[] { dir.toURI().toURL() });
 			
-			Class<?> cls = Class.forName(this.className, true, classLoader);
+			Class<?> cls = Class.forName(this.packageName + "." + this.className, true, classLoader);
 			
 			Object task = cls.newInstance();
 			
