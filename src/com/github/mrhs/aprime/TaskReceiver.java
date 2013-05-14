@@ -8,6 +8,11 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLClassLoader;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 
 import sun.misc.IOUtils;
 
@@ -34,7 +39,8 @@ public class TaskReceiver extends Thread
 			InputStream reader = this.socket.getInputStream();
 			PrintWriter writer = new PrintWriter(this.socket.getOutputStream(), true);
 			
-			FileOutputStream fileOutput = new FileOutputStream(new File(this.className + ".java"));
+			File file = new File(this.className + ".java");
+			FileOutputStream fileOutput = new FileOutputStream(file);
 			BufferedOutputStream buffOut = new BufferedOutputStream(fileOutput);
 			
 			System.out.println("Stream opened");
@@ -63,8 +69,21 @@ public class TaskReceiver extends Thread
 			fileOutput.close();
 			
 			System.out.println("Stream closed");
+			
+			JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+			compiler.run(null, null, null, file.getPath());
+			
+			File dir = file.getCanonicalFile().getParentFile();
+			
+			URLClassLoader classLoader = new URLClassLoader(new URL[] { dir.toURI().toURL() });
+			
+			Class<?> cls = Class.forName(this.className, true, classLoader);
+			
+			Object task = cls.newInstance();
+			
+			System.out.println(task);
 		}
-		catch (IOException e)
+		catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
