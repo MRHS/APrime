@@ -40,30 +40,60 @@ public class MulticastReceiver extends Thread
 				
 				// TODO PROCESS THE RECEIVED DATA AND FIRE ASSOCIATED EVENTS
 				
-				String data = new String(buffer);
+				String data = new String(buffer).trim();
 				
-				if (data.substring(0, 6).equals("JOINED"))
+				String[] parts = data.split(" ");
+				
+				switch(parts[0])
 				{
+				case "JOINED":
 					for (MulticastListener listener :  this.listeners)
 					{
 						listener.nodeJoined(packet.getAddress());
 					}
-				} else if (data.substring(0, 4).equals("PING"))
-				{
+					
+					break;
+					
+				case "PING":
 					for (MulticastListener listener :  this.listeners)
 					{
 						listener.ping(packet.getAddress());
 					}
-				} else if (data.substring(0, 4).equals("PONG"))
-				{
+					
+					break;
+					
+				case "PONG":
 					for (MulticastListener listener :  this.listeners)
 					{
 						listener.pong(packet.getAddress());
 					}
-				}
-				else
-				{
-					System.out.println("Received unkown message: " + data);
+					
+					break;
+					
+				case "TASK":
+					String taskId = parts[1];
+					int status = Integer.parseInt(parts[2]);
+					
+					switch (status)
+					{
+					case 1:
+						break;
+					case 2:
+						break;
+					case 3:
+						break;
+					case 4:
+						break;
+					default:
+						System.out.println("Received unknown task status: " + status);
+					}
+					
+					break;
+					
+				default:
+					System.out.println("Received unknown message: " + parts[0]);
+					
+					break;
 				}
 			}
 		}

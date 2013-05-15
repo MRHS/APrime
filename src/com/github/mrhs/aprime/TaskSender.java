@@ -22,7 +22,7 @@ public class TaskSender extends Thread
 		try {
 			this.socket = new ServerSocket(1337);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// TODO Handle issues when opening socket
 			e.printStackTrace();
 		}
 	}
@@ -75,7 +75,7 @@ public class TaskSender extends Thread
 		}
 		catch (IOException | InterruptedException e)
 		{
-			// TODO Auto-generated catch block
+			// TODO Handle issues when sending source file
 			e.printStackTrace();
 		}
 	}
