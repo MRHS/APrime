@@ -48,6 +48,22 @@ public class MulticastReceiver extends Thread
 					{
 						listener.nodeJoined(packet.getAddress());
 					}
+				} else if (data.substring(0, 4).equals("PING"))
+				{
+					for (MulticastListener listener :  this.listeners)
+					{
+						listener.ping();
+					}
+				} else if (data.substring(0, 4).equals("PONG"))
+				{
+					for (MulticastListener listener :  this.listeners)
+					{
+						listener.pong();
+					}
+				}
+				else
+				{
+					System.out.println("Received unkown message: " + data);
 				}
 			}
 		}

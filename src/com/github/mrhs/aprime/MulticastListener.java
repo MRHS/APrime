@@ -10,6 +10,6 @@ interface MulticastListener
 	//void newTask(String id, InetAddress address, int port);
 	//void taskStarted(String id);
 	
-	//void ping();
-	//void pong();
+	void ping();
+	void pong();
 }

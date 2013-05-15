@@ -8,16 +8,31 @@ public class Runner
 {
 	public static void main(String[] args) throws Exception
 	{
+		final MulticastSender sender = new MulticastSender(InetAddress.getByName("229.229.13.37"));
+		
 		MulticastReceiver receiver = new MulticastReceiver(InetAddress.getByName("229.229.13.37"));
 		receiver.addListener(new MulticastListener() {
 			@Override
 			public void nodeJoined(InetAddress address) {
 				System.out.println(address.getHostName() + " joined");
+				
+				sender.sendData("PING");
+			}
+
+			@Override
+			public void ping() {
+				sender.sendData("PONG");
+			}
+
+			@Override
+			public void pong() {
+				
 			}
 		});
 		receiver.start();
 		
-		MulticastSender sender = new MulticastSender(InetAddress.getByName("229.229.13.37"));
+		Thread.sleep(500);
+		
 		sender.start();
 		
 		sender.sendData("JOINED");
