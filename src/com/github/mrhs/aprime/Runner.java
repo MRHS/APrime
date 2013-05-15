@@ -2,7 +2,9 @@ package com.github.mrhs.aprime;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import com.github.mrhs.aprime.tasks.Task;
 
@@ -11,6 +13,7 @@ public class Runner
 	public static void main(String[] args) throws Exception
 	{
 		final List<InetAddress> nodes = new ArrayList<InetAddress>();
+		final Queue<Task> tasks = new LinkedList<Task>();
 		
 		final MulticastSender sender = new MulticastSender(InetAddress.getByName("229.229.13.37"));
 		
@@ -59,8 +62,23 @@ public class Runner
 		taskReceiver.addListener(new TaskListener() {
 			@Override
 			public void taskReceiveFinished(Task task) {
-				System.out.println(task);
+				tasks.add(task);
+				
+				System.out.println("Added task to task queue");
 			}});
 		taskReceiver.start();
+		
+		while (true)
+		{
+			if (tasks.isEmpty())
+			{
+				Thread.sleep(1000);
+				continue;
+			}
+			
+			Task task = tasks.poll();
+			
+			System.out.println(task);
+		}
 	}
 }
