@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MulticastReceiver extends Thread
 {
 	private InetAddress address;
 	private MulticastSocket socket;
+	
+	private List<MulticastListener> listeners = new ArrayList<MulticastListener>();
 	
 	public MulticastReceiver(InetAddress address)
 	{
@@ -35,6 +39,16 @@ public class MulticastReceiver extends Thread
 				this.socket.receive(packet);
 				
 				// TODO PROCESS THE RECEIVED DATA AND FIRE ASSOCIATED EVENTS
+				
+				String data = new String(buffer);
+				
+				if (data.substring(0, 6).equals("JOINED"))
+				{
+					for (MulticastListener listener :  this.listeners)
+					{
+						listener.nodeJoined(packet.getAddress());
+					}
+				}
 			}
 		}
 		catch (IOException e)
@@ -43,5 +57,10 @@ public class MulticastReceiver extends Thread
 			
 			e.printStackTrace();
 		}
+	}
+	
+	public void addListener(MulticastListener listener)
+	{
+		this.listeners.add(listener);
 	}
 }

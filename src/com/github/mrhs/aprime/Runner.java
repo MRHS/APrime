@@ -9,10 +9,18 @@ public class Runner
 	public static void main(String[] args) throws Exception
 	{
 		MulticastReceiver receiver = new MulticastReceiver(InetAddress.getByName("229.229.13.37"));
+		receiver.addListener(new MulticastListener() {
+			@Override
+			public void nodeJoined(InetAddress address) {
+				System.out.println(address.getHostName() + " joined");
+			}
+		});
 		receiver.start();
 		
 		MulticastSender sender = new MulticastSender(InetAddress.getByName("229.229.13.37"));
 		sender.start();
+		
+		sender.sendData("JOINED");
 		
 		TaskSender taskSender = new TaskSender(new TestTask());
 		taskSender.start();
