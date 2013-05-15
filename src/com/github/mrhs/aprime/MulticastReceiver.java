@@ -52,13 +52,13 @@ public class MulticastReceiver extends Thread
 				{
 					for (MulticastListener listener :  this.listeners)
 					{
-						listener.ping();
+						listener.ping(packet.getAddress());
 					}
 				} else if (data.substring(0, 4).equals("PONG"))
 				{
 					for (MulticastListener listener :  this.listeners)
 					{
-						listener.pong();
+						listener.pong(packet.getAddress());
 					}
 				}
 				else
