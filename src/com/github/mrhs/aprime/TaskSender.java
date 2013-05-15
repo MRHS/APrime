@@ -31,7 +31,11 @@ public class TaskSender extends Thread
 	{
 		try
 		{
+			// GET THE BYTE DATA OF THE FILE
+			
 			byte[] sourceFile = Files.readAllBytes(Paths.get(this.task.getTaskLocation()));
+			
+			// KEEP SENDING UNTIL THE SOCKET CLOSES
 			
 			while (!this.socket.isClosed())
 			{
@@ -39,16 +43,27 @@ public class TaskSender extends Thread
 				
 				Socket receiveSocket = this.socket.accept();
 				
+				// CREATE THE OUTPUT STREAM THAT WILL BE USED TO TRANSFER THE FILE
+				
 				DataOutputStream outputStream = new DataOutputStream(receiveSocket.getOutputStream());
 				
 				int i = 0;
+				
+				// TRANSFER THE FILE IN 512-BYTE "CHUNKS"
+				// TO ENSURE THAT THEY FIT IN INDIVIDUAL PACKETS
 				
 				for (i = 0; (i + 512) < sourceFile.length; i += 512)
 				{
 					outputStream.write(Arrays.copyOfRange(sourceFile, i, i + 512));
 				}
 				
+				// SEND THE LAST "CHUNK" OF THE FILE
+				// IT MAY NOT NECESSARILY BE 512 BYTES
+				
 				outputStream.write(Arrays.copyOfRange(sourceFile, i, sourceFile.length));
+				
+				// WAIT FIVE SECONDS BEFORE CLOSING THE SOCKET
+				// PREVENTS RACE CONDITION WHEN RECEIVING THE FILE
 				
 				Thread.sleep(5000);
 				
