@@ -77,6 +77,13 @@ public class MulticastReceiver extends Thread
 					switch (status)
 					{
 					case 1:
+						int port = Integer.parseInt(parts[3]);
+
+						for (MulticastListener listener :  this.listeners)
+						{
+							listener.newTask(taskId, packet.getAddress(), port);
+						}
+						
 						break;
 					case 2:
 						break;

@@ -38,6 +38,11 @@ public class Runner
 				
 				System.out.println("Nodes in cluster: " + nodes.size());
 			}
+
+			@Override
+			public void newTask(String id, InetAddress address, int port) {
+				System.out.println("New task [" + id + "] started at " + address.getHostName() + ":" + port);
+			}
 		});
 		receiver.start();
 		
