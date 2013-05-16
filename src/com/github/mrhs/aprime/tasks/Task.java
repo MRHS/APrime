@@ -6,5 +6,4 @@ public interface Task extends Serializable
 {
 	public int getId();
 	public TaskResult run();
-	public String getTaskLocation();
 }

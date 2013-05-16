@@ -1,9 +1,11 @@
 package com.github.mrhs.aprime;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -31,9 +33,36 @@ public class TaskSender extends Thread
 	{
 		try
 		{
+			// GET THE TASK CLASS LOCATION
+			
+			URL sourceFileUrl = this.task.getClass().getProtectionDomain().getCodeSource().getLocation();
+			File actualSourceFile = new File(sourceFileUrl.getPath());
+			
+			// GET THE SOURCE DIRECTORY
+			
+			File javaSourceFileDir = actualSourceFile.getParentFile();
+			
+			// BREAK THE PACKAGE NAME TO MATCH THE DIRECTORY FORMAT
+			
+			String moduleName = this.task.getClass().getPackage().getName();
+			String[] modules = moduleName.split("\\.");
+			
+			String moduleDir = "";
+			
+			// BUILD THE PACKAGE NAME INTO A DIRECTORY PATH
+			
+			for (String module : modules)
+			{
+				moduleDir += module + "/";
+			}
+			
+			// GET THE EXACT SOURCE FILE
+			
+			File javaSourceFile = new File(javaSourceFileDir.getAbsoluteFile() + "/src/" + moduleDir + this.task.getClass().getSimpleName() + ".java");
+			
 			// GET THE BYTE DATA OF THE FILE
 			
-			byte[] sourceFile = Files.readAllBytes(Paths.get(this.task.getTaskLocation()));
+			byte[] sourceFile = Files.readAllBytes(javaSourceFile.toPath());
 			
 			// KEEP SENDING UNTIL THE SOCKET CLOSES
 			

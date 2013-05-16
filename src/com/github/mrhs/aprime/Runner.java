@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Queue;
 
 import com.github.mrhs.aprime.tasks.Task;
+import com.github.mrhs.aprime.tasks.TaskResult;
 
 public class Runner
 {
@@ -78,7 +79,7 @@ public class Runner
 			
 			Task task = tasks.poll();
 			
-			System.out.println(task);
+			TaskResult result = task.run();
 		}
 	}
 }
