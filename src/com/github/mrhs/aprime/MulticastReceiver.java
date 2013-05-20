@@ -23,14 +23,14 @@ public class MulticastReceiver extends Thread
 	{
 		try
 		{
-			// CREATE THE MULTICAST SOCKET AND LISTEN ON THE GIVEN ADDRESS
+			// Create the multicast listener and join the group
 			
 			this.socket = new MulticastSocket(8820);
 			this.socket.joinGroup(address);
 			
 			while (true)
 			{
-				// ONLY BUFFER 512 BYTES, AS IT IS THE RECOMMENDED PACKET SIZE
+				// Only buffer 512 bytes, as it is the recommended packet size
 				
 				byte[] buffer = new byte[512];
 				
@@ -38,15 +38,19 @@ public class MulticastReceiver extends Thread
 				
 				this.socket.receive(packet);
 				
-				// TODO PROCESS THE RECEIVED DATA AND FIRE ASSOCIATED EVENTS
+				// Get the string of what was sent, trim off any null characters and spaces
 				
 				String data = new String(buffer).trim();
+				
+				// Split the message into parts
 				
 				String[] parts = data.split(" ");
 				
 				switch(parts[0])
 				{
 				case "JOINED":
+					// Fired when nodes join the cluster
+					
 					for (MulticastListener listener :  this.listeners)
 					{
 						listener.nodeJoined(packet.getAddress());
@@ -55,6 +59,8 @@ public class MulticastReceiver extends Thread
 					break;
 					
 				case "PING":
+					// Fired periodically by nodes looking for a node count
+					
 					for (MulticastListener listener :  this.listeners)
 					{
 						listener.ping(packet.getAddress());
@@ -63,6 +69,8 @@ public class MulticastReceiver extends Thread
 					break;
 					
 				case "PONG":
+					// Fired in response to pings
+					
 					for (MulticastListener listener :  this.listeners)
 					{
 						listener.pong(packet.getAddress());
@@ -71,12 +79,16 @@ public class MulticastReceiver extends Thread
 					break;
 					
 				case "TASK":
+					// All task-related  messages
+					
 					String taskId = parts[1];
 					int status = Integer.parseInt(parts[2]);
 					
 					switch (status)
 					{
 					case 1:
+						// Fired when a new task is created that needs to be handled
+						
 						int port = Integer.parseInt(parts[3]);
 
 						for (MulticastListener listener :  this.listeners)
@@ -86,6 +98,8 @@ public class MulticastReceiver extends Thread
 						
 						break;
 					case 2:
+						// Fired when a node receives a task file successfully
+						
 						for (MulticastListener listener :  this.listeners)
 						{
 							listener.taskStarted(taskId, packet.getAddress());
@@ -93,6 +107,8 @@ public class MulticastReceiver extends Thread
 						
 						break;
 					case 3:
+						// Fired when a task gives an exception while running it
+						
 						for (MulticastListener listener :  this.listeners)
 						{
 							listener.taskAborted(taskId, packet.getAddress());
@@ -100,6 +116,8 @@ public class MulticastReceiver extends Thread
 						
 						break;
 					case 4:
+						// Fired when a task is successfully completed, without issues
+						
 						port = Integer.parseInt(parts[3]);
 
 						for (MulticastListener listener :  this.listeners)
@@ -109,12 +127,16 @@ public class MulticastReceiver extends Thread
 						
 						break;
 					default:
+						// TODO Handle invalid task statuses
+						
 						System.out.println("Received unknown task status: " + status);
 					}
 					
 					break;
 					
 				default:
+					// TODO Handle invalid messages
+					
 					System.out.println("Received unknown message: " + parts[0]);
 					
 					break;
@@ -123,7 +145,7 @@ public class MulticastReceiver extends Thread
 		}
 		catch (IOException e)
 		{
-			// TODO HANDLE SOCKET ERRORS
+			// TODO Handle socket errors
 			
 			e.printStackTrace();
 		}
