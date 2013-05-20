@@ -8,7 +8,7 @@ interface MulticastListener
 	//void nodeLeft(InetAddress address);
 	
 	void newTask(String id, InetAddress address, int port);
-	//void taskStarted(String id);
+	void taskStarted(String id, InetAddress address);
 	
 	void ping(InetAddress address);
 	void pong(InetAddress address);

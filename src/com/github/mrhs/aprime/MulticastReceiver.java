@@ -86,6 +86,11 @@ public class MulticastReceiver extends Thread
 						
 						break;
 					case 2:
+						for (MulticastListener listener :  this.listeners)
+						{
+							listener.taskStarted(taskId, packet.getAddress());
+						}
+						
 						break;
 					case 3:
 						break;

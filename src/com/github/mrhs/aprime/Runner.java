@@ -46,6 +46,26 @@ public class Runner
 			@Override
 			public void newTask(String id, InetAddress address, int port) {
 				System.out.println("New task [" + id + "] started at " + address.getHostName() + ":" + port);
+				/*
+				if (tasks.size() < 3)
+				{
+					TaskReceiver taskReceiver = new TaskReceiver(address, port, "com.github.mrhs.aprime", "TestTask");
+					taskReceiver.addListener(new TaskListener() {
+						@Override
+						public void taskReceiveFinished(Task task) {
+							tasks.add(task);
+							
+							sender.sendData("TASK " + task.getId() + " 2");
+							
+							System.out.println("Added task to task queue");
+						}});
+					taskReceiver.start();
+				}*/
+			}
+
+			@Override
+			public void taskStarted(String id, InetAddress address) {
+				System.out.println("Task [" + id + "] started at " + address.getHostName());
 			}
 		});
 		receiver.start();
@@ -56,18 +76,19 @@ public class Runner
 		
 		sender.sendData("JOINED");
 		
-		TaskSender taskSender = new TaskSender(new TestTask());
+		Thread.sleep(500);
+		
+		Task testTask = new TestTask();
+		
+		TaskSender taskSender = new TaskSender(testTask, 5876);
 		taskSender.start();
 		
-		TaskReceiver taskReceiver = new TaskReceiver(InetAddress.getLocalHost(), 1337, "com.github.mrhs.aprime", "TestTask");
-		taskReceiver.addListener(new TaskListener() {
-			@Override
-			public void taskReceiveFinished(Task task) {
-				tasks.add(task);
-				
-				System.out.println("Added task to task queue");
-			}});
-		taskReceiver.start();
+		while (!taskSender.isTransferring)
+		{
+			sender.sendData("TASK " + testTask.getId() + " 1 5876");
+			
+			Thread.sleep(5000);
+		}
 		
 		while (true)
 		{
@@ -79,7 +100,16 @@ public class Runner
 			
 			Task task = tasks.poll();
 			
-			TaskResult result = task.run();
+			try
+			{
+				TaskResult result = task.run();
+				
+				sender.sendData("TASK " + task.getId() + " 4");
+			}
+			catch (Exception e)
+			{
+				sender.sendData("TASK " + task.getId() + " 3");
+			}
 		}
 	}
 }

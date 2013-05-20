@@ -7,7 +7,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
 import com.github.mrhs.aprime.tasks.Task;
@@ -16,13 +15,17 @@ public class TaskSender extends Thread
 {
 	private ServerSocket socket;
 	private Task task;
+	private int port;
 	
-	public TaskSender(Task task)
+	public boolean isTransferring = false;
+	
+	public TaskSender(Task task, int port)
 	{
 		this.task = task;
+		this.port = port;
 		
 		try {
-			this.socket = new ServerSocket(1337);
+			this.socket = new ServerSocket(port);
 		} catch (IOException e) {
 			// TODO Handle issues when opening socket
 			e.printStackTrace();
@@ -71,6 +74,8 @@ public class TaskSender extends Thread
 				System.out.println("Waiting for socket: " + sourceFile.length);
 				
 				Socket receiveSocket = this.socket.accept();
+				
+				this.isTransferring = true;
 				
 				// CREATE THE OUTPUT STREAM THAT WILL BE USED TO TRANSFER THE FILE
 				
