@@ -46,7 +46,7 @@ public class Runner
 			@Override
 			public void newTask(String id, InetAddress address, int port) {
 				System.out.println("New task [" + id + "] started at " + address.getHostName() + ":" + port);
-				/*
+				
 				if (tasks.size() < 3)
 				{
 					TaskReceiver taskReceiver = new TaskReceiver(address, port, "com.github.mrhs.aprime", "TestTask");
@@ -60,12 +60,22 @@ public class Runner
 							System.out.println("Added task to task queue");
 						}});
 					taskReceiver.start();
-				}*/
+				}
 			}
 
 			@Override
 			public void taskStarted(String id, InetAddress address) {
 				System.out.println("Task [" + id + "] started at " + address.getHostName());
+			}
+
+			@Override
+			public void taskAborted(String id, InetAddress address) {
+				System.out.println("Task [" + id + "] aborted at " + address.getHostName());
+			}
+
+			@Override
+			public void taskFinished(String id, InetAddress address, int port) {
+				System.out.println("Task [" + id + "] finished at " + address.getHostName() + ":" + port);
 			}
 		});
 		receiver.start();
@@ -104,7 +114,7 @@ public class Runner
 			{
 				TaskResult result = task.run();
 				
-				sender.sendData("TASK " + task.getId() + " 4");
+				sender.sendData("TASK " + task.getId() + " 4 1234");
 			}
 			catch (Exception e)
 			{

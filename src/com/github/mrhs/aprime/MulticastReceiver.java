@@ -93,8 +93,20 @@ public class MulticastReceiver extends Thread
 						
 						break;
 					case 3:
+						for (MulticastListener listener :  this.listeners)
+						{
+							listener.taskAborted(taskId, packet.getAddress());
+						}
+						
 						break;
 					case 4:
+						port = Integer.parseInt(parts[3]);
+
+						for (MulticastListener listener :  this.listeners)
+						{
+							listener.taskFinished(taskId, packet.getAddress(), port);
+						}
+						
 						break;
 					default:
 						System.out.println("Received unknown task status: " + status);
