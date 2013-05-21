@@ -78,7 +78,7 @@ public class TaskSender extends Thread
 			
 			// KEEP SENDING UNTIL THE SOCKET CLOSES
 			
-			while (!this.socket.isClosed())
+			while (this.socket != null && !this.socket.isClosed())
 			{
 				System.out.println("Waiting for socket: " + sourceFile.length);
 				
@@ -111,6 +111,7 @@ public class TaskSender extends Thread
 				Thread.sleep(5000);
 				
 				receiveSocket.close();
+				this.socket.setReuseAddress(true);
 				this.socket.close();
 				
 				System.out.println("Finished sending");
@@ -121,5 +122,15 @@ public class TaskSender extends Thread
 			// TODO Handle issues when sending source file
 			e.printStackTrace();
 		}
+	}
+	
+	public int getPort()
+	{
+		if (this.socket != null && !this.socket.isClosed())
+		{
+			return this.socket.getLocalPort();
+		}
+		
+		return 0;
 	}
 }
