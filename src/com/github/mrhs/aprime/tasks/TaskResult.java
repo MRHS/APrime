@@ -4,5 +4,7 @@ import java.io.Serializable;
 
 public interface TaskResult extends Serializable
 {
+	
+	//Returns task id of task
 	public int getTaskId();
 }
