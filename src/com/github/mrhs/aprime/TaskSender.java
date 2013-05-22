@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.util.Arrays;
 
@@ -13,34 +14,25 @@ import com.github.mrhs.aprime.tasks.Task;
 
 public class TaskSender extends Thread
 {
-	//Server for sending task
 	private ServerSocket socket;
-	
-	//The task to be sent
 	private Task task;
-	
-	//Port server is running on
 	private int port;
 	
-	
-	//Bool for if server is transferring the task
 	public boolean isTransferring = false;
 	
-	//Constructor
 	public TaskSender(Task task, int port)
 	{
 		this.task = task;
 		this.port = port;
 		
 		try {
-			this.socket = new ServerSocket(port);
+			this.socket = new ServerSocket(this.port);
 		} catch (IOException e) {
 			// TODO Handle issues when opening socket
 			e.printStackTrace();
 		}
 	}
 	
-	//Run method for the thread
 	public void run()
 	{
 		try
@@ -48,7 +40,7 @@ public class TaskSender extends Thread
 			// GET THE TASK CLASS LOCATION
 			
 			URL sourceFileUrl = this.task.getClass().getProtectionDomain().getCodeSource().getLocation();
-			File actualSourceFile = new File(sourceFileUrl.getPath());
+			File actualSourceFile = new File(URLDecoder.decode(sourceFileUrl.getPath(), "UTF-8"));
 			
 			// GET THE SOURCE DIRECTORY
 			
@@ -57,20 +49,12 @@ public class TaskSender extends Thread
 			// BREAK THE PACKAGE NAME TO MATCH THE DIRECTORY FORMAT
 			
 			String moduleName = this.task.getClass().getPackage().getName();
-			String[] modules = moduleName.split("\\.");
 			
-			String moduleDir = "";
-			
-			// BUILD THE PACKAGE NAME INTO A DIRECTORY PATH
-			
-			for (String module : modules)
-			{
-				moduleDir += module + "/";
-			}
+			String moduleDir = moduleName.replace('.', '/');
 			
 			// GET THE EXACT SOURCE FILE
 			
-			File javaSourceFile = new File(javaSourceFileDir.getAbsoluteFile() + "/src/" + moduleDir + this.task.getClass().getSimpleName() + ".java");
+			File javaSourceFile = new File(javaSourceFileDir.getAbsoluteFile() + "/src/" + moduleDir + "/" + this.task.getClass().getSimpleName() + ".java");
 			
 			// GET THE BYTE DATA OF THE FILE
 			
@@ -92,6 +76,15 @@ public class TaskSender extends Thread
 				
 				int i = 0;
 				
+				String fileInfo = this.task.getClass().getSimpleName() + " " + this.task.getClass().getPackage().getName();
+				byte[] fileData = fileInfo.getBytes();
+				
+				byte[] fileDataBuffer = new byte[512];
+				
+				System.arraycopy(fileData, 0, fileDataBuffer, 0, fileData.length);
+				
+				outputStream.write(fileDataBuffer);
+				
 				// TRANSFER THE FILE IN 512-BYTE "CHUNKS"
 				// TO ENSURE THAT THEY FIT IN INDIVIDUAL PACKETS
 				
@@ -111,6 +104,7 @@ public class TaskSender extends Thread
 				Thread.sleep(5000);
 				
 				receiveSocket.close();
+				
 				this.socket.setReuseAddress(true);
 				this.socket.close();
 				

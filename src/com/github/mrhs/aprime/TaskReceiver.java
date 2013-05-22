@@ -29,12 +29,10 @@ public class TaskReceiver extends Thread
 	
 	private List<TaskListener> listeners = new ArrayList<TaskListener>();
 	
-	public TaskReceiver(InetAddress address, int port, String packageName, String className)
+	public TaskReceiver(InetAddress address, int port)
 	{
 		this.address = address;
 		this.port = port;
-		this.packageName = packageName;
-		this.className = className;
 	}
 	
 	public void run()
@@ -53,9 +51,25 @@ public class TaskReceiver extends Thread
 			
 			PrintWriter writer = new PrintWriter(this.socket.getOutputStream(), true);
 			
+			byte[] fileData = new byte[512];
+			
+			reader.read(fileData);
+			
+			String fileInfo = new String(fileData).trim();
+			
+			String[] infoParts = fileInfo.split(" ");
+			
+			this.className = infoParts[0];
+			this.packageName = infoParts[1];
+			
+			// Convert the package path to a directory path
+			
+			String packagePath = this.packageName.replace('.', '/');
+			
 			// CREATE THE FILE WITH THE PROVIDED CLASS NAME IN THE CURRENT DIRECTORY
 			
-			File file = new File(this.className + ".java");
+			File file = new File("tasks/" + packagePath + "/" + this.className + ".java");
+			file.getParentFile().mkdirs();
 			
 			// INITIALIZE THE BUFFERS USED FOR WRITING THE DATA TO THE FILE
 			
