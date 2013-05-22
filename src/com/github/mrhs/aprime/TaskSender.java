@@ -13,12 +13,20 @@ import com.github.mrhs.aprime.tasks.Task;
 
 public class TaskSender extends Thread
 {
+	//Server for sending task
 	private ServerSocket socket;
+	
+	//The task to be sent
 	private Task task;
+	
+	//Port server is running on
 	private int port;
 	
+	
+	//Bool for if server is transferring the task
 	public boolean isTransferring = false;
 	
+	//Constructor
 	public TaskSender(Task task, int port)
 	{
 		this.task = task;
@@ -32,6 +40,7 @@ public class TaskSender extends Thread
 		}
 	}
 	
+	//Run method for the thread
 	public void run()
 	{
 		try
