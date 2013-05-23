@@ -11,9 +11,9 @@ public class FindPrimesTask implements Task {
 	private BigInteger end;
 	private ArrayList<BigInteger> results;
 
-	public FindPrimesTask() {
-		this.start = BigInteger.valueOf(1000000);
-		this.end = BigInteger.valueOf(10000000);
+	public FindPrimesTask(BigInteger start, BigInteger end) {
+		this.start = start;
+		this.end = end;
 		results = new ArrayList<BigInteger>();
 	}
 
@@ -24,7 +24,7 @@ public class FindPrimesTask implements Task {
 	}
 
 	@Override
-	public TaskResult run(String[] args) {
+	public TaskResult run() {
 		for (BigInteger current = start.nextProbablePrime();
 			 current.compareTo(end) < 1;
 			 current = current.nextProbablePrime()) {
