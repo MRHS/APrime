@@ -1,3 +1,5 @@
+package com.github.mrhs.aprime;
+
 import java.math.BigDecimal;
 
 /** Division of string values

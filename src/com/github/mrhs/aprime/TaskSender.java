@@ -76,7 +76,7 @@ public class TaskSender extends Thread
 				
 				int i = 0;
 				
-				String fileInfo = this.task.getClass().getSimpleName() + " " + this.task.getClass().getPackage().getName();
+				String fileInfo = this.task.getClass().getSimpleName() + " " + this.task.getClass().getPackage().getName() + " " + this.task.getArgs();
 				byte[] fileData = fileInfo.getBytes();
 				
 				byte[] fileDataBuffer = new byte[512];

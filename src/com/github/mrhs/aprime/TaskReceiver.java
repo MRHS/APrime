@@ -62,6 +62,16 @@ public class TaskReceiver extends Thread
 			this.className = infoParts[0];
 			this.packageName = infoParts[1];
 			
+			String args = "";
+			
+			if (infoParts.length > 2)
+			{
+				for (int i = 2; i < infoParts.length; i++)
+				{
+					args += infoParts[i] + " ";
+				}
+			}
+			
 			// Convert the package path to a directory path
 			
 			String packagePath = this.packageName.replace('.', '/');
@@ -141,6 +151,7 @@ public class TaskReceiver extends Thread
 			// CREATE THE NEW INSTANCE OF THE TASK
 			
 			Task task = (Task) cls.newInstance();
+			task.setArgs(args);
 			
 			// FIRE THE taskReceiveFinished HANDLERS WITH THE NEW TASK
 			

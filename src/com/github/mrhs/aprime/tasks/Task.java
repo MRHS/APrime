@@ -5,5 +5,9 @@ import java.io.Serializable;
 public interface Task extends Serializable
 {
 	public int getId();
-	public TaskResult run(String[] args);
+	
+	public String getArgs();
+	public void setArgs(String args);
+	
+	public TaskResult run();
 }

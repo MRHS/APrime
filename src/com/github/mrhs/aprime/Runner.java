@@ -1,5 +1,6 @@
 package com.github.mrhs.aprime;
 
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -88,7 +89,7 @@ public class Runner
 		
 		Thread.sleep(500);
 		
-		Task testTask = new TestTask();
+		Task testTask = new FindPrimesTask(new BigInteger("10"), new BigInteger("9001"));
 		
 		TaskSender taskSender = new TaskSender(testTask, 5876);
 		taskSender.start();
@@ -112,7 +113,7 @@ public class Runner
 			
 			try
 			{
-				TaskResult result = task.run(null);
+				TaskResult result = task.run();
 				
 				sender.sendData("TASK " + task.getId() + " 4 1234");
 			}

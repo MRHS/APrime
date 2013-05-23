@@ -11,9 +11,15 @@ public class FindPrimesTask implements Task {
 	private BigInteger end;
 	private ArrayList<BigInteger> results;
 
+	public FindPrimesTask()
+	{
+		results = new ArrayList<BigInteger>();
+	}
+	
 	public FindPrimesTask(BigInteger start, BigInteger end) {
 		this.start = start;
 		this.end = end;
+		
 		results = new ArrayList<BigInteger>();
 	}
 
@@ -29,9 +35,21 @@ public class FindPrimesTask implements Task {
 			 current.compareTo(end) < 1;
 			 current = current.nextProbablePrime()) {
 			results.add(current);
-			System.out.println("Hello!");
 		}
 		System.out.println(results.toString());
 		return null;
+	}
+
+	@Override
+	public String getArgs() {
+		return this.start.toString() + " " + this.end.toString();
+	}
+
+	@Override
+	public void setArgs(String args) {
+		String[] parts = args.split(" ");
+		
+		this.start = new BigInteger(parts[0]);
+		this.end = new BigInteger(parts[1]);
 	}
 }
