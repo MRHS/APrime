@@ -48,7 +48,7 @@ public class Runner
 			public void newTask(String id, InetAddress address, int port) {
 				System.out.println("New task [" + id + "] started at " + address.getHostName() + ":" + port);
 				
-				if (tasks.size() < 3)
+				if (tasks.size() > 3)
 				{
 					TaskReceiver taskReceiver = new TaskReceiver(address, port);
 					taskReceiver.addListener(new TaskListener() {
@@ -89,18 +89,30 @@ public class Runner
 		
 		Thread.sleep(500);
 		
-		Task testTask = new FindPrimesTask(new BigInteger("10"), new BigInteger("9001"));
+		BigInteger start = new BigInteger("10");
+		BigInteger end;
 		
-		TaskSender taskSender = new TaskSender(testTask, 5876);
-		taskSender.start();
-		
-		while (!taskSender.isTransferring)
+		while(true)
 		{
-			sender.sendData("TASK " + testTask.getId() + " 1 5876");
+			end = start.add(new BigInteger("100000"));
 			
-			Thread.sleep(5000);
+			Task testTask = new FindPrimesTask(start, end);
+			
+			TaskSender taskSender = new TaskSender(testTask, 0);
+			taskSender.start();
+			
+			while (!taskSender.isTransferring)
+			{
+				sender.sendData("TASK " + testTask.getId() + " 1 " + taskSender.getPort());
+				
+				Thread.sleep(5000);
+			}
+			
+			Thread.sleep(500);
+			
+			start = end;
 		}
-		
+		/*
 		while (true)
 		{
 			if (tasks.isEmpty())
@@ -122,5 +134,6 @@ public class Runner
 				sender.sendData("TASK " + task.getId() + " 3");
 			}
 		}
+		*/
 	}
 }
