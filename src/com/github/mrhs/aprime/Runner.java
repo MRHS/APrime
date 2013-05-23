@@ -49,7 +49,7 @@ public class Runner
 				
 				if (tasks.size() < 3)
 				{
-					TaskReceiver taskReceiver = new TaskReceiver(address, port, "com.github.mrhs.aprime", "TestTask");
+					TaskReceiver taskReceiver = new TaskReceiver(address, port);
 					taskReceiver.addListener(new TaskListener() {
 						@Override
 						public void taskReceiveFinished(Task task) {
@@ -112,7 +112,7 @@ public class Runner
 			
 			try
 			{
-				TaskResult result = task.run();
+				TaskResult result = task.run(null);
 				
 				sender.sendData("TASK " + task.getId() + " 4 1234");
 			}

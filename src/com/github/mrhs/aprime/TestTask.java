@@ -12,7 +12,7 @@ public class TestTask implements Task {
 	}
 
 	@Override
-	public TaskResult run() {
+	public TaskResult run(String[] args) {
 		// TODO Auto-generated method stub
 		System.out.println("Running task");
 		
